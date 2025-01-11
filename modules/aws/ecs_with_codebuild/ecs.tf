@@ -63,14 +63,17 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_role_attachment" {
     policy_arn = aws_iam_policy.ecs_execution_role.arn
 }
 
-resource "aws_ecs_cluster" "web_to_pdf" {
-    name = "${var.environment_name}-web-to-pdf"
+resource "aws_ecs_cluster" "default" {
+    name = "${var.environment_name}"
 }
 
 resource "aws_ecs_service" "web_to_pdf" {
   name            = "${var.environment_name}-web-to-pdf"
-  cluster         = aws_ecs_cluster.web_to_pdf.id
-  task_definition = aws_ecs_task_definition.web_to_pdf.arn
+  cluster         = aws_ecs_cluster.default.id
+  task_definition = "${aws_ecs_task_definition.web_to_pdf.family}:${max(
+    aws_ecs_task_definition.web_to_pdf.revision,
+    data.aws_ecs_task_definition.web_to_pdf.revision
+  )}" # If Codepipeline has deployed a higher revision, use that instead of the one which was initially deployed by Terraform
   desired_count   = 1
   launch_type = "FARGATE"
 
@@ -85,6 +88,11 @@ resource "aws_ecs_service" "web_to_pdf" {
     container_name   = "web-to-pdf"
     container_port   = 443
   }
+}
+
+data "aws_ecs_task_definition" "web_to_pdf" {
+  depends_on = [aws_ecs_task_definition.web_to_pdf]
+  task_definition = aws_ecs_task_definition.web_to_pdf.family
 }
 
 resource "aws_ecs_task_definition" "web_to_pdf" {

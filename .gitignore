@@ -1,1 +1,3 @@
 **/.terraform/**
+modules/aws/ecs_with_codebuild/web_to_pdf.zip
+modules/aws/ecs_with_codebuild/web_to_svg.zip

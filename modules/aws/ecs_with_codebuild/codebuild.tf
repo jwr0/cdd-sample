@@ -40,6 +40,18 @@ data "aws_iam_policy_document" "codebuild" {
             "*",
         ]
     }
+
+    statement {
+      sid = "CodepipelineArtifacts"
+      effect = "Allow"
+      actions = [
+          "s3:GetObject",
+          "s3:PutObject",
+      ]
+      resources = [
+          "${aws_s3_bucket.codepipeline_bucket.arn}/*",
+      ]
+    }
 }
 
 resource "aws_iam_policy" "codebuild" {
@@ -101,18 +113,13 @@ resource "aws_codebuild_project" "web_to_pdf" {
             pre_build = {
                 on-failure: "ABORT"
                 commands = [
+                    "ls -la", # TODO: Remove this
                     "echo Logging in to Amazon ECR...",
                     "aws --version",
                     "aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${data.aws_caller_identity.codebuild.account_id}.dkr.ecr.$${AWS_DEFAULT_REGION}.amazonaws.com",
                     "REPOSITORY_URI=${aws_ecr_repository.web_to_pdf.repository_url}",
                     "COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)",
                     "IMAGE_TAG=$${COMMIT_HASH:=$(date +%s)}",
-
-                    # In the real world you would hook this pipeline into GitHub (or etc),
-                    # instead of creating a Dockerfile on the fly like this. But
-                    # this is fine for a little code sample.
-                    "echo FROM mendhak/http-https-echo:31 > Dockerfile",
-                    "echo 'RUN echo This is the web-to-pdf Docker image.' >> Dockerfile",
                     "cat Dockerfile",
                 ]
             }
