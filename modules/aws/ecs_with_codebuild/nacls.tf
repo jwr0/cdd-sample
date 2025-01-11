@@ -41,6 +41,15 @@ resource "aws_network_acl" "public" {
     to_port    = 443
   }
 
+  egress {
+    protocol   = "tcp"
+    rule_no    = 32000
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
   tags = {
     Name = "${var.environment_name}-public"
   }
@@ -77,6 +86,15 @@ resource "aws_network_acl" "private" {
     cidr_block = "0.0.0.0/0"
     from_port  = 443
     to_port    = 443
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 32000
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
   }
 
   tags = {

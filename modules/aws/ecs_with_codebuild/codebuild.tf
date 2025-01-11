@@ -122,6 +122,7 @@ resource "aws_codebuild_project" "web_to_pdf" {
                     "echo Build started on `date`",
                     "echo Building the Docker image...",
                     "docker build -t $REPOSITORY_URI:$${IMAGE_TAG} .",
+                    "docker tag $REPOSITORY_URI:$${IMAGE_TAG} $REPOSITORY_URI:latest"
                 ]
             }
             post_build = {
@@ -130,6 +131,7 @@ resource "aws_codebuild_project" "web_to_pdf" {
                     "echo Build completed on `date`",
                     "echo Pushing the Docker images...",
                     "docker push $REPOSITORY_URI:$IMAGE_TAG",
+                    "docker push $REPOSITORY_URI:latest",
                     "echo Writing image definitions file...",
                     "printf '[{\"name\":\"web-to-pdf\",\"imageUri\":\"%s\"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json",
                     "cat imagedefinitions.json",
