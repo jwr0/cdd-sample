@@ -5,8 +5,8 @@
 # there.
 
 resource "aws_s3_bucket" "fake_github" {
-    bucket_prefix = "${var.environment_name}-fake-github-"
-    force_destroy = true
+  bucket_prefix = "${var.environment_name}-fake-github-"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_versioning" "fake_github" {
@@ -22,7 +22,7 @@ data "archive_file" "web_to_pdf_dockerfile" {
 
   source {
     filename = "Dockerfile"
-    content = <<DOCKERFILE
+    content  = <<DOCKERFILE
 FROM mendhak/http-https-echo:31
 RUN echo This is the web-to-pdf Docker image.
 DOCKERFILE
@@ -44,8 +44,8 @@ resource "aws_codepipeline" "web_to_pdf" {
     type     = "S3"
   }
 
-# In the real world, this would be a connection to a repository such as GitHub.
-# But in the context of this exercise, we'll skip this and use S3 instead.
+  # In the real world, this would be a connection to a repository such as GitHub.
+  # But in the context of this exercise, we'll skip this and use S3 instead.
   stage {
     name = "Source"
 
@@ -94,9 +94,9 @@ resource "aws_codepipeline" "web_to_pdf" {
       version         = "1"
 
       configuration = {
-        ClusterName = aws_ecs_cluster.default.name
-        ServiceName = aws_ecs_service.web_to_pdf.name
-        FileName    = "imagedefinitions.json"
+        ClusterName       = aws_ecs_cluster.default.name
+        ServiceName       = aws_ecs_service.web_to_pdf.name
+        FileName          = "imagedefinitions.json"
         DeploymentTimeout = 15 # minute
       }
     }
@@ -109,7 +109,7 @@ data "archive_file" "svg_to_pdf_dockerfile" {
 
   source {
     filename = "Dockerfile"
-    content = <<DOCKERFILE
+    content  = <<DOCKERFILE
 FROM mendhak/http-https-echo:31
 RUN echo This is the svg-to-pdf Docker image.
 DOCKERFILE
@@ -131,8 +131,8 @@ resource "aws_codepipeline" "svg_to_pdf" {
     type     = "S3"
   }
 
-# In the real world, this would be a connection to a repository such as GitHub.
-# But in the context of this exercise, we'll skip this and use S3 instead.
+  # In the real world, this would be a connection to a repository such as GitHub.
+  # But in the context of this exercise, we'll skip this and use S3 instead.
   stage {
     name = "Source"
 
@@ -181,9 +181,9 @@ resource "aws_codepipeline" "svg_to_pdf" {
       version         = "1"
 
       configuration = {
-        ClusterName = aws_ecs_cluster.default.name
-        ServiceName = aws_ecs_service.svg_to_pdf.name
-        FileName    = "imagedefinitions.json"
+        ClusterName       = aws_ecs_cluster.default.name
+        ServiceName       = aws_ecs_service.svg_to_pdf.name
+        FileName          = "imagedefinitions.json"
         DeploymentTimeout = 15 # minute
       }
     }
@@ -227,7 +227,7 @@ resource "aws_iam_role" "codepipeline_role" {
 
 data "aws_iam_policy_document" "codepipeline_policy" {
   statement {
-    sid = "S3Access"
+    sid    = "S3Access"
     effect = "Allow"
     actions = [
       "s3:GetObject",
@@ -249,7 +249,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   }
 
   statement {
-    sid = "CodebuildAccess"
+    sid    = "CodebuildAccess"
     effect = "Allow"
     actions = [
       "codebuild:BatchGetBuilds",
@@ -261,16 +261,16 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 
   statement {
     # See the ECS section https://docs.aws.amazon.com/codepipeline/latest/userguide/security-iam.html#how-to-custom-role
-    sid = "DeployToECS"
+    sid    = "DeployToECS"
     effect = "Allow"
     actions = [
-        "ecs:DescribeServices",
-        "ecs:DescribeTaskDefinition",
-        "ecs:DescribeTasks",
-        "ecs:ListTasks",
-        "ecs:RegisterTaskDefinition",
-        "ecs:TagResource",
-        "ecs:UpdateService",
+      "ecs:DescribeServices",
+      "ecs:DescribeTaskDefinition",
+      "ecs:DescribeTasks",
+      "ecs:ListTasks",
+      "ecs:RegisterTaskDefinition",
+      "ecs:TagResource",
+      "ecs:UpdateService",
     ]
     # resources = [aws_ecs_service.web_to_pdf.id]
     resources = ["*"]
@@ -278,10 +278,10 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 
   statement {
     # See the ECS section https://docs.aws.amazon.com/codepipeline/latest/userguide/security-iam.html#how-to-custom-role
-    sid = "DeployToECSPassRole"
+    sid    = "DeployToECSPassRole"
     effect = "Allow"
     actions = [
-        "iam:PassRole",
+      "iam:PassRole",
     ]
     resources = [aws_iam_role.ecs_execution_role.arn]
   }

@@ -15,14 +15,14 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "production" {
-  count = var.launch_production_ec2_instance ? 1 : 0
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
-  subnet_id = aws_subnet.private[0].id
+  count                  = var.launch_production_ec2_instance ? 1 : 0
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3.micro"
+  subnet_id              = aws_subnet.private[0].id
   vpc_security_group_ids = [aws_security_group.ec2_servers.id]
 
   user_data_replace_on_change = true
-  user_data = <<EOF
+  user_data                   = <<EOF
 #!/bin/bash
 set -x
 # Redirect output to the console. https://repost.aws/knowledge-center/ec2-linux-log-user-data

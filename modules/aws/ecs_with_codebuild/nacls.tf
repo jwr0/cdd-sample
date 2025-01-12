@@ -12,16 +12,6 @@ resource "aws_network_acl" "public" {
   }
 
   ingress {
-    # Load balancers need this in order to handle a 301 redirect from HTTP to HTTPS
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 80
-    to_port    = 80
-  }
-
-  ingress {
     # Allow ephemeral traffic returning back to the VPC
     # https://docs.aws.amazon.com/vpc/latest/userguide/nacl-ephemeral-ports.html
     protocol   = "tcp"

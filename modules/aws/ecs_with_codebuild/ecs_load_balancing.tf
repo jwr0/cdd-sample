@@ -20,14 +20,14 @@ resource "aws_lb_target_group" "web_to_pdf_external" {
   vpc_id      = aws_vpc.default.id
 
   health_check {
-      path                  = "/"
-      protocol              = "HTTPS"
-      matcher               = "200"
-      port                  = "traffic-port"
-      healthy_threshold     = 2
-      unhealthy_threshold   = 2
-      timeout               = 10
-      interval              = 30
+    path                = "/"
+    protocol            = "HTTPS"
+    matcher             = "200"
+    port                = "traffic-port"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
   }
 }
 
@@ -66,14 +66,14 @@ resource "aws_lb_target_group" "web_to_pdf_internal" {
   vpc_id      = aws_vpc.default.id
 
   health_check {
-      path                  = "/"
-      protocol              = "HTTPS"
-      matcher               = "200"
-      port                  = "traffic-port"
-      healthy_threshold     = 2
-      unhealthy_threshold   = 2
-      timeout               = 10
-      interval              = 30
+    path                = "/"
+    protocol            = "HTTPS"
+    matcher             = "200"
+    port                = "traffic-port"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
   }
 }
 
@@ -112,14 +112,14 @@ resource "aws_lb_target_group" "svg_to_pdf_external" {
   vpc_id      = aws_vpc.default.id
 
   health_check {
-      path                  = "/"
-      protocol              = "HTTPS"
-      matcher               = "200"
-      port                  = "traffic-port"
-      healthy_threshold     = 2
-      unhealthy_threshold   = 2
-      timeout               = 10
-      interval              = 30
+    path                = "/"
+    protocol            = "HTTPS"
+    matcher             = "200"
+    port                = "traffic-port"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
   }
 }
 
@@ -158,14 +158,14 @@ resource "aws_lb_target_group" "svg_to_pdf_internal" {
   vpc_id      = aws_vpc.default.id
 
   health_check {
-      path                  = "/"
-      protocol              = "HTTPS"
-      matcher               = "200"
-      port                  = "traffic-port"
-      healthy_threshold     = 2
-      unhealthy_threshold   = 2
-      timeout               = 10
-      interval              = 30
+    path                = "/"
+    protocol            = "HTTPS"
+    matcher             = "200"
+    port                = "traffic-port"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
   }
 }
 
