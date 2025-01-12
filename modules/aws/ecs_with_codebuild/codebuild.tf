@@ -120,6 +120,7 @@ resource "aws_codebuild_project" "web_to_pdf" {
                     "REPOSITORY_URI=${aws_ecr_repository.web_to_pdf.repository_url}",
                     "COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)",
                     "IMAGE_TAG=$${COMMIT_HASH:=$(date +%s)}",
+                    "docker pull $REPOSITORY_URI:latest || true", # So we can re-use the old layers in the cache for faster builds.
                     "cat Dockerfile",
                 ]
             }
@@ -128,8 +129,8 @@ resource "aws_codebuild_project" "web_to_pdf" {
                 commands = [
                     "echo Build started on `date`",
                     "echo Building the Docker image...",
-                    "docker build -t $REPOSITORY_URI:$${IMAGE_TAG} .",
-                    "docker tag $REPOSITORY_URI:$${IMAGE_TAG} $REPOSITORY_URI:latest"
+                    "docker build -t $REPOSITORY_URI:$${IMAGE_TAG} --cache-from $REPOSITORY_URI:latest .",
+                    "docker tag $REPOSITORY_URI:$${IMAGE_TAG} $REPOSITORY_URI:latest",
                 ]
             }
             post_build = {
@@ -195,6 +196,7 @@ resource "aws_codebuild_project" "svg_to_pdf" {
                     "REPOSITORY_URI=${aws_ecr_repository.svg_to_pdf.repository_url}",
                     "COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)",
                     "IMAGE_TAG=$${COMMIT_HASH:=$(date +%s)}",
+                    "docker pull $REPOSITORY_URI:latest || true", # So we can re-use the old layers in the cache for faster builds.
                     "cat Dockerfile",
                 ]
             }
@@ -203,7 +205,7 @@ resource "aws_codebuild_project" "svg_to_pdf" {
                 commands = [
                     "echo Build started on `date`",
                     "echo Building the Docker image...",
-                    "docker build -t $REPOSITORY_URI:$${IMAGE_TAG} .",
+                    "docker build -t $REPOSITORY_URI:$${IMAGE_TAG} --cache-from $REPOSITORY_URI:latest .",
                     "docker tag $REPOSITORY_URI:$${IMAGE_TAG} $REPOSITORY_URI:latest"
                 ]
             }
