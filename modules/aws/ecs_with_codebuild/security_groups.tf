@@ -11,8 +11,8 @@ resource "aws_security_group" "web_to_pdf_load_balancer" {
 resource "aws_vpc_security_group_ingress_rule" "web_to_pdf_load_balancer" {
   for_each = { for rule in [
     {
-        index_name = "https_from_internet"
-        cidr_ipv4 = "0.0.0.0/0"
+        index_name = "https_from_on_prem"
+        cidr_ipv4 = var.on_prem_ip_address
         ip_protocol = "tcp"
         from_port = 443
         to_port = 443
@@ -111,8 +111,8 @@ resource "aws_security_group" "svg_to_pdf_load_balancer" {
 resource "aws_vpc_security_group_ingress_rule" "svg_to_pdf_load_balancer" {
   for_each = { for rule in [
     {
-        index_name = "https_from_internet"
-        cidr_ipv4 = "0.0.0.0/0"
+        index_name = "https_from_on_prem"
+        cidr_ipv4 = var.on_prem_ip_address
         ip_protocol = "tcp"
         from_port = 443
         to_port = 443
