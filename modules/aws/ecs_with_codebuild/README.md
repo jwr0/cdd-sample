@@ -17,7 +17,7 @@ The requirements which this module satisfies are:
 
 1. Review the variables seen below in this readme. You'll need to fill out:
   * `on_prem_ip_address`: This represents the on-prem IP address, and for testing purposes you can use the public IP of your laptop (eg. the IP seen at https://whatismyip.com or similar).
-  * `acm_certificate_arn`: This should be the ARN of an ACM certificate which is already issued and available for usage in your account. In the real world Terraform would built this on its own, but presumably you would rather avoid writing DNS records into your DNS zones just for this code sample. Note that an HTTPS hostname mismatch is to be expected, and all services should be accessed using `curl -k` to work around the mismatch.
+  * `acm_certificate_arn`: This should be the ARN of an ACM certificate which is already issued and available for usage in your account. In the real world Terraform would build this on its own, but presumably you would rather avoid writing DNS records into your DNS zones just for this code sample. Note that an HTTPS hostname mismatch is to be expected, and all services should be accessed using `curl -k` to work around the mismatch.
   * `launch_production_ec2_instance`: should be set to `false` when initially applying this infrastructure. This will be used later when verifying connectivity to the ECS services from within AWS.
 2. `terraform apply`
 3. In my experience, Codepipeline will already start building images as soon as the `apply` completes. But if it doesn't start on its own, you'll need to kick off a pipeline execution using the `Release Change` button in the AWS console any given pipeline. The services should not be expected to work until the pipeline has run at least once and built the image.

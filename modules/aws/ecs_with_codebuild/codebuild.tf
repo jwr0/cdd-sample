@@ -113,7 +113,6 @@ resource "aws_codebuild_project" "web_to_pdf" {
         pre_build = {
           on-failure : "ABORT"
           commands = [
-            "ls -la", # TODO: Remove this
             "echo Logging in to Amazon ECR...",
             "aws --version",
             "aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${data.aws_caller_identity.codebuild.account_id}.dkr.ecr.$${AWS_DEFAULT_REGION}.amazonaws.com",
@@ -189,7 +188,6 @@ resource "aws_codebuild_project" "svg_to_pdf" {
         pre_build = {
           on-failure : "ABORT"
           commands = [
-            "ls -la", # TODO: Remove this
             "echo Logging in to Amazon ECR...",
             "aws --version",
             "aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${data.aws_caller_identity.codebuild.account_id}.dkr.ecr.$${AWS_DEFAULT_REGION}.amazonaws.com",
