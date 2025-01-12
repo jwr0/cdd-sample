@@ -84,9 +84,15 @@ resource "aws_ecs_service" "web_to_pdf" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.web_to_pdf.arn
+    target_group_arn = aws_lb_target_group.web_to_pdf_external.arn
     container_name   = "web-to-pdf"
     container_port   = 443
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.web_to_pdf_internal.arn
+    container_name = "web-to-pdf"
+    container_port = 443
   }
 }
 
@@ -145,7 +151,13 @@ resource "aws_ecs_service" "svg_to_pdf" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.svg_to_pdf.arn
+    target_group_arn = aws_lb_target_group.svg_to_pdf_external.arn
+    container_name   = "svg-to-pdf"
+    container_port   = 443
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.svg_to_pdf_internal.arn
     container_name   = "svg-to-pdf"
     container_port   = 443
   }
