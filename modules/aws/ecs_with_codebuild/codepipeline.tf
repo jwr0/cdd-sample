@@ -103,6 +103,93 @@ resource "aws_codepipeline" "web_to_pdf" {
   }
 }
 
+data "archive_file" "svg_to_pdf_dockerfile" {
+  type        = "zip"
+  output_path = "${path.module}/svg_to_pdf.zip"
+
+  source {
+    filename = "Dockerfile"
+    content = <<DOCKERFILE
+FROM mendhak/http-https-echo:31
+RUN echo This is the svg-to-pdf Docker image.
+DOCKERFILE
+  }
+}
+
+resource "aws_s3_object" "svg_to_pdf_dockerfile" {
+  bucket = aws_s3_bucket.fake_github.bucket
+  key    = "svg_to_pdf/Dockerfile"
+  source = data.archive_file.svg_to_pdf_dockerfile.output_path
+}
+
+resource "aws_codepipeline" "svg_to_pdf" {
+  name     = "${var.environment_name}-svg-to-pdf"
+  role_arn = aws_iam_role.codepipeline_role.arn
+
+  artifact_store {
+    location = aws_s3_bucket.codepipeline_bucket.bucket
+    type     = "S3"
+  }
+
+# In the real world, this would be a connection to a repository such as GitHub.
+# But in the context of this exercise, we'll skip this and use S3 instead.
+  stage {
+    name = "Source"
+
+    action {
+      name             = "Source"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "S3"
+      version          = "1"
+      output_artifacts = ["source_output"]
+
+      configuration = {
+        S3Bucket    = aws_s3_bucket.fake_github.bucket
+        S3ObjectKey = "svg_to_pdf/Dockerfile"
+      }
+    }
+  }
+
+  stage {
+    name = "Build"
+
+    action {
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["source_output"]
+      output_artifacts = ["imagedefinitions"]
+      version          = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.svg_to_pdf.name
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      input_artifacts = ["imagedefinitions"]
+      version         = "1"
+
+      configuration = {
+        ClusterName = aws_ecs_cluster.default.name
+        ServiceName = aws_ecs_service.svg_to_pdf.name
+        FileName    = "imagedefinitions.json"
+        DeploymentTimeout = 15 # minute
+      }
+    }
+  }
+}
+
 resource "aws_s3_bucket" "codepipeline_bucket" {
   bucket_prefix = "${var.environment_name}-codepipeline-"
   force_destroy = true
