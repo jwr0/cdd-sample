@@ -19,3 +19,8 @@ variable "launch_production_ec2_instance" {
   type        = bool
   default     = false
 }
+
+variable "acm_certificate_arn" {
+  description = "The ARN of the ACM certificate to use for the ALBs."
+  type        = string
+}

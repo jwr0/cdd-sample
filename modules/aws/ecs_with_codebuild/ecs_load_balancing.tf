@@ -36,7 +36,7 @@ resource "aws_lb_listener" "web_to_pdf_external" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = "arn:aws:acm:us-east-1:430682828307:certificate/4a1f7785-1ea5-47e0-b47e-ed1373b78420" # TODO - come back to this
+  certificate_arn   = var.acm_certificate_arn
 
   default_action {
     type             = "forward"
@@ -82,7 +82,7 @@ resource "aws_lb_listener" "web_to_pdf_internal" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = "arn:aws:acm:us-east-1:430682828307:certificate/4a1f7785-1ea5-47e0-b47e-ed1373b78420" # TODO - come back to this
+  certificate_arn   = var.acm_certificate_arn
 
   default_action {
     type             = "forward"
